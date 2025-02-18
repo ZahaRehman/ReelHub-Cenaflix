@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Riddick",
+        "description": "Left for dead on a sun-scorched planet...",
+        "duration": 119,
+        "rating": 6.8, 
+        "totalRating": 329,
+        "releaseYear": 2013,
+        "releaseDate": "2013-09-04T00:00:00Z",
+        "genres": ["Action", "Sci-Fi", "Thriller"],
+        "directors": ["David Twohy"],
+        "coverImage": "Riddick-2013.jpg",
+        "actor": "Vin Diesel",  
+        "price": 50
+    }
+]
