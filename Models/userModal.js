@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
             },
             message: "password and confirm password does not match!"
 
+            
         }
     },
     passwordChangedAt: Date,
