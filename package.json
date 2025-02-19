@@ -1,0 +1,24 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "learning express js with node js",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Zaha Rehman",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.10.0",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.9",
+    "validator": "^13.12.0"
+  }
+}
