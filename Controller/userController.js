@@ -59,10 +59,8 @@ exports.deleteMe= asyncErrorHandler(async(req,res,next)=>{
 
 })
 
-
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
-      // roles is an array of allowed roles, e.g. ['admin']
       if (!roles.includes(req.user.role)) {
         return next(
           new AppError('You do not have permission to perform this action', 403)
@@ -72,5 +70,40 @@ exports.restrictTo = (...roles) => {
     };
   };
 
+
+
+exports.addToWatchlist = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user.id; // assuming req.user is populated from auth middleware
+    const { movieId } = req.body;
+
+    // Use $addToSet to prevent duplicates
+    const user = await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { watchlist: movieId } },
+        { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+        status: 'success',
+        data: { watchlist: user.watchlist }
+    });
+});
+
+
+exports.removeFromWatchlist = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user.id;
+    const { movieId } = req.params;
+
+    const user = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { watchlist: movieId } },
+        { new: true }
+    );
+
+    res.status(200).json({
+        status: 'success',
+        data: { watchlist: user.watchlist }
+    });
+});
 
 

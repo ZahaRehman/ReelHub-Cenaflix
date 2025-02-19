@@ -65,7 +65,6 @@ exports.login= asyncErrorHandler(async(req,res,next)=>{
     
 
     // const isMatch= await user.comparePasswordInDb(password, user.password)
-    
     // const{email, passowrd}= req.body;
     if(!user|| !(await user.comparePasswordInDb(password, user.password))){
         const error= new customError('incorrect email or password', 400)

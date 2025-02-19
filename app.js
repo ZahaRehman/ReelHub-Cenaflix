@@ -20,17 +20,13 @@ app.use('./api',limite);
 app.use(express.json());
 app.use(express.static('./public'));
 
-
-
 app.use("/api/v1/movies",moviesRouter);
 app.use("/api/v1/auth",authRouter);
 app.use("/api/v1/user",userRoute);
 app.use("/api/v1/admin", adminRouter);
 
 
-
 app.all('*',(req,res,next)=>{
-   
     const err = new CustomError(`Can't find ${req.originalUrl} on the server`, 404);
     next(err);
 

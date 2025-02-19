@@ -4,6 +4,19 @@ const bcrypt= require('bcryptjs')
 const crypto= require('crypto');
 const { stringify } = require('querystring');
 
+const customListSchema = new mongoose.Schema({
+    name: {
+      type: String,
+      required: [true, 'Please provide a name for your custom list']
+    },
+    movies: [{
+      type: mongoose.Schema.ObjectId,
+      ref: 'Movie'
+    }]
+  });
+  
+
+
 const userSchema = new mongoose.Schema({
     name:{
         type: String,
@@ -47,6 +60,17 @@ const userSchema = new mongoose.Schema({
         default: true,
         select: false
     }
+    ,  // New fields for Watchlist and Favorites:
+    watchlist: [{
+      type: mongoose.Schema.ObjectId,
+      ref: 'Movie'
+    }],
+    favorites: [{
+      type: mongoose.Schema.ObjectId,
+      ref: 'Movie'
+    }],
+    // Custom Lists array using our sub-schema
+    customLists: [customListSchema]
 })
 
 
