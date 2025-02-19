@@ -29,6 +29,7 @@ exports.createMovie= asyncErrorHandler(async (req,res, next)=>{
 
 
 exports.getAllMovies = asyncErrorHandler(async(req,res, next)=>{
+        
 
     const  features= new ApiFeatures(Movie.find(), req.query).filter().sort().limitFields().pagination();
     let movies= await features.query;
@@ -160,109 +161,3 @@ exports.getAllMoviesByGener=asyncErrorHandler(async(req,res, next)=>{
     })
 
 })
-
-
-
-
-
-
-
-
-
-
-
-// 
-                                                   // previous method 
-                                                    
-                                                    // exports.checkId= (req,res,next, value)=>{
-                                                    //     const movie= movies.find(el=> el.id===+value)
-                                                    
-                                                    //     if(!movie){
-                                                    
-                                                    //         return res.status(404).json({
-                                                    //         status: "fail",
-                                                    //         message: "movie with ID " +value+ " is not found"
-                                                    //         })
-                                                    //     }
-                                                    // }
-                                                    
-// exports.getAllMovies = (req,res)=>{
-//     res.status(200).json({
-//         status: "success",
-//         count: movies.length,
-//         requestedAt: req.requestedAt,
-//         data:{
-//             movies
-//         }
-//     })
-// }
-
-
-// exports.getMovie =(req, res)=>{
-//     const id= +req.params.id    //to convert string to number using --> +
-//     const movie= movies.find((item)=>{
-//         return item.id===id
-//     })
-
-//     res.status(200).json(
-//         {
-//             status: "success",
-//             data:{
-//                 movie: movie
-//             }
-//         }
-//     );
-// }
-
-// exports.createMovie= (req,res)=>{
-//     // console.log(req.body);
-//     const newId= movies[movies.length-1].id+1;
-//     const newMovie= Object.assign({id: newId}, req.body)
-//     movies.push(newMovie);
-//     fs.writeFile('./Data/movies.json',JSON.stringify(movies),(err)=>{
-//         res.status(201).json({
-//             status:"success",
-//             data:{
-//                 movie: newMovie
-//             }
-//         })
-//     })
-    
-// }
-
-// exports.updateMovie= (req, res)=>{
-//     let id=req.params.id*1;
-//     let movieToUpdate=movies.find(el=> el.id===id)
-
-//     const movieIndex= movies.indexOf(movieToUpdate);
-//     let updated=Object.assign(movieToUpdate, req.body)
-//     movies[movieIndex]= updated
-
-
-//     fs.writeFile('./data/movies.json', JSON.stringify(movies), (err)=>{
-//         res.status(200).json({
-//             status:"success",
-//             data:{
-//                 movie: updated
-//             } 
-//         })
-//     })
-
-// }
-
-// exports.deleteMovie =(req,res)=>{
-//     const id = +req.params.id;
-//     const movietoDelete= movies.find(el=>el.id===id)
-//     const index= movies.indexOf(movietoDelete);
-//     movies.splice(index,1)
-
-//     fs.writeFile('./data/movies.json', JSON.stringify(movies), (err)=>{
-//         res.status(204).json({
-//             status:"success",
-//             data:{
-//                 movie: null
-//             } 
-//         })
-//     })
-// }
-

@@ -5,6 +5,7 @@ const customError= require('./../Utils/customError');
 const CustomError = require('./../Utils/customError');
 const { promisify } = require('util');
 const sendEmail= require('./../Utils/email')
+const crypto= require('crypto')
 
 const signToken= id=>{
     return jwt.sign({id: id},process.env.SECRET_STR,{
@@ -12,21 +13,43 @@ const signToken= id=>{
     })
 }
 
+exports.createSendResponse= (user, statusCode,res)=>{
+    const token = signToken(user._id)
+    
 
-exports.signup=asyncErrorHandler(async (req, res, next)=>{
-    const newUser =await User.create(req.body)
+    const options={
+        manAge: process.env.LOGIN_EXPIRES,
+        httpOnly: true
+    }
+
+    if(process.env.NODE_ENV==='production'){
+        options.secure=true;
+    }
+
+    res.cookie('jwt',token,options);
+
+    user.password= undefined;
     
-    const token = signToken(newUser._id)
-    
-    res.status(201).json({
+    res.status(statusCode).json({
         status: 'success',
         token,
         data:{
-            user: newUser
+            user
         }
 
     });
+}
+
+
+exports.signup=asyncErrorHandler(async (req, res, next)=>{
+    const newUser =await User.create(req.body)
+    if(req.body.role==='admin'){
+        return next(new customError('You are not Authorized to creat admin', 401));
+    }
+    createSendResponse(newUser,201,res);
 });
+
+
 
 exports.login= asyncErrorHandler(async(req,res,next)=>{
     const email= req.body.email;
@@ -108,6 +131,7 @@ exports.restrict = (...role)=>{
 exports.forgotPassword= asyncErrorHandler(async (req,res,next)=>{
     const user= await User.findOne({email: req.body.email})
 
+
     if(!user){
         const error = new customError("could not find a user", 404)
         next(error);
@@ -139,6 +163,59 @@ exports.forgotPassword= asyncErrorHandler(async (req,res,next)=>{
     }
 })
 
-exports.resetpassword=(req,res,next)=>{
+exports.resetpassword=asyncErrorHandler( async(req,res,next)=>{
+    const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user= await User.findOne({passwordResetToken: token, passwordResetTokenExpire: {$gt: Date.now()}})
+    if(!user){
+        const error = new customError("this token is invalid", 400);
+        next(error);
+    }
+    user.password= req.body.password;
+    user.confirmPassword= req.body.password;
 
-}
+    user.passwordResetToken= undefined;
+    user.passwordResetTokenExpire= undefined;
+    user.passwordChangedAt= Date.now();
+    user.save();
+
+
+
+    const loginToken = signToken(user._id);
+
+
+    res.status(200).json({
+        status: 'success',
+        loginToken
+    });
+
+})
+
+
+
+exports.updatePassword= asyncErrorHandler(async(req,res,next)=>{
+    const user= await User.findById(req.user._id).select('+password'); 
+
+    if( !(await user.comparePasswordInDb(req.body.currentPassword, user.password))){
+        return next(new customError("current password you provide is wrong", 401))
+
+    }
+
+    user.password= req.body.password;
+    user.confirmPassword= req.body.confirmPassword
+
+    await user.save();
+
+    const loginToken = signToken(user._id);
+
+
+    res.status(200).json({
+        status: 'success',
+        loginToken,
+        data:{
+            user
+        }
+    });
+    
+})
+
+

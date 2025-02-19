@@ -5,9 +5,8 @@ class ApiFeatures {
     }
 
     filter() {
-        // Convert the query object to a string
+        
         let querystring = JSON.stringify(this.queryStr);
-        // Replace operators with MongoDB operators (e.g., gte -> $gte)
         querystring = querystring.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
         // Parse the string back into an object
         const queryOBJ = JSON.parse(querystring); // Fixed: used 'querystring'
@@ -21,7 +20,7 @@ class ApiFeatures {
     }
 
     sort() {
-        if (this.queryStr.sort) {
+        if (this.queryStr.sort){
             const sortBy = this.queryStr.sort.split(',').join(' ');
             this.query = this.query.sort(sortBy);
         } else {

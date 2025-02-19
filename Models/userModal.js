@@ -37,13 +37,16 @@ const userSchema = new mongoose.Schema({
                 return val== this.password;
             },
             message: "password and confirm password does not match!"
-
-
         }
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
-    passwordResetTokenExpire: Date
+    passwordResetTokenExpire: Date,
+    active:{
+        type: Boolean,
+        default: true,
+        select: false
+    }
 })
 
 
@@ -75,6 +78,20 @@ userSchema.methods.createResetPasswordToken=function(){
     this.passwordResetTokenExpire= Date.now()+10*60*1000
     return resetToken
 }
+
+userSchema.pre(/^find/, function(next){
+    
+    this.find({active: {$ne:false}})
+    next()
+})
+
+
+// userSchema.pre('save', function(next) {
+//     if (this.isNew) {
+//       this.role = 'user';  // always set new users as 'user'
+//     }
+//     next();
+//   });
 
 const user= mongoose.model('User', userSchema);
 
